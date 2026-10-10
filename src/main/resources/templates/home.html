@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/home.css" />
+
+    <title>Gestão Financeira</title>
+  </head>
+
+  <body>
+    <!-- =====================================================
+         LAYOUT PRINCIPAL
+         ===================================================== -->
+
+    <div class="app">
+      <!-- =================================================
+             SIDEBAR
+             A ideia é que novas páginas possam ser adicionadas
+             facilmente aqui no futuro.
+             ================================================= -->
+
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1 class="logo">Finances</h1>
+        </div>
+
+        <nav class="sidebar-navigation">
+          <ul>
+            <li class="navigation-item active">
+              <a href="#moviments">
+                <span class="navigation-icon">💰</span>
+                <span>Movimentações</span>
+              </a>
+            </li>
+
+            <!--
+                    Exemplo de futuras páginas:
+
+                    <li class="navigation-item">
+                        <a href="#dashboard">
+                            <span class="navigation-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="navigation-item">
+                        <a href="#categories">
+                            <span class="navigation-icon">🏷️</span>
+                            <span>Categorias</span>
+                        </a>
+                    </li>
+
+                    <li class="navigation-item">
+                        <a href="#reports">
+                            <span class="navigation-icon">📈</span>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                    -->
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- =================================================
+             CONTEÚDO PRINCIPAL
+             ================================================= -->
+
+      <div class="content">
+        <!-- =================================================
+                 HEADER
+                 Informações do usuário vindas futuramente do backend.
+                 ================================================= -->
+
+        <header class="header">
+          <div class="header-title">
+            <h2>Movimentações</h2>
+            <p>Controle suas movimentações financeiras.</p>
+          </div>
+
+          <!-- Perfil do usuário -->
+
+          <div class="user-container">
+            <button
+              type="button"
+              class="user-profile"
+              id="user-profile-button"
+              aria-label="Abrir opções do usuário"
+            >
+              <img
+                src="https://i.pinimg.com/474x/57/54/4f/57544f26d902645c85b783ba1e9643e1.jpg"
+                alt="Foto de perfil do usuário"
+                class="user-profile-image"
+              />
+
+              <div class="user-information">
+                <!--
+                            Esses dados futuramente serão
+                            preenchidos pelo backend.
+                            -->
+
+                <span class="user-name" id="user-name"> Nome do usuário </span>
+
+                <span class="user-email" id="user-email">
+                  usuario@email.com
+                </span>
+              </div>
+
+              <span class="user-arrow">⌄</span>
+            </button>
+
+            <!-- =================================================
+                         POPUP DO USUÁRIO
+                         ================================================= -->
+
+            <div class="user-popup" id="user-popup">
+              <div class="user-popup-header">
+                <strong>Minha conta</strong>
+              </div>
+
+              <div class="user-popup-actions">
+                <button
+                  type="button"
+                  id="update-account-button"
+                  class="popup-action"
+                >
+                  <span>👤</span>
+                  <span>Atualizar cadastro</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="delete-account-button"
+                  class="popup-action danger"
+                >
+                  <span>🗑️</span>
+                  <span>Apagar conta</span>
+                </button>
+
+                <button type="button" id="logout-button" class="popup-action">
+                  <span>🚪</span>
+                  <span>Sair</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- =================================================
+                 MAIN
+                 ================================================= -->
+
+        <main class="main">
+          <!-- Resumo financeiro -->
+
+          <section class="financial-summary">
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <span>Saldo atual</span>
+                <span class="summary-icon">💰</span>
+              </div>
+
+              <!--
+                        Futuramente esse valor poderá ser calculado
+                        pelo backend.
+                        -->
+
+              <strong class="summary-value" id="current-balance">
+                R$ 0,00
+              </strong>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <span>Entradas</span>
+                <span class="summary-icon">↗</span>
+              </div>
+
+              <strong class="summary-value income" id="total-income">
+                R$ 0,00
+              </strong>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <span>Saídas</span>
+                <span class="summary-icon">↘</span>
+              </div>
+
+              <strong class="summary-value expense" id="total-expense">
+                R$ 0,00
+              </strong>
+            </div>
+          </section>
+
+          <!-- =================================================
+                     MOVIMENTAÇÕES
+                     ================================================= -->
+
+          <section class="movements-section" id="moviments">
+            <div class="section-header">
+              <div>
+                <h3>Movimentações financeiras</h3>
+
+                <p>Histórico das suas movimentações.</p>
+              </div>
+
+              <!--
+                        Esse botão também abre o popup de criação.
+                        -->
+
+              <button
+                type="button"
+                class="primary-button"
+                id="open-create-movement"
+              >
+                + Nova movimentação
+              </button>
+            </div>
+
+            <!-- =================================================
+                         TABELA
+                         ================================================= -->
+
+            <div class="table-container">
+              <table id="moviment-table">
+                <thead>
+                  <tr>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+
+                    <!--
+                                    Última coluna destinada
+                                    à criação de uma movimentação.
+                                    -->
+
+                    <th class="action-column">
+                      <button
+                        type="button"
+                        class="add-button"
+                        id="open-create-movement-table"
+                        aria-label="Nova movimentação"
+                      >
+                        +
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody id="moviment-table-body">
+                  <!--
+                                As movimentações serão inseridas
+                                aqui através do JavaScript.
+
+                                Exemplo futuro:
+
+                                <tr>
+                                    <td>R$ 1.500,00</td>
+                                    <td>07/10/2026</td>
+                                    <td>ENTRADA</td>
+                                    <td>Salário</td>
+                                    <td>Trabalho</td>
+                                    <td></td>
+                                </tr>
+                                -->
+                </tbody>
+              </table>
+
+              <!-- Mensagem quando não existem movimentações -->
+
+              <div class="empty-table" id="empty-table">
+                <span class="empty-icon">💸</span>
+
+                <h4>Nenhuma movimentação encontrada</h4>
+
+                <p>Comece registrando sua primeira movimentação financeira.</p>
+
+                <button
+                  type="button"
+                  class="primary-button"
+                  id="empty-create-movement"
+                >
+                  Criar movimentação
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- =================================================
+                 FOOTER
+                 ================================================= -->
+
+        <footer class="footer">
+          <span> Finances • Projeto acadêmico </span>
+        </footer>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         POPUP - NOVA MOVIMENTAÇÃO
+         ========================================================= -->
+
+    <div class="modal-overlay" id="create-movement-modal">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-movement-title"
+      >
+        <div class="modal-header">
+          <div>
+            <h3 id="create-movement-title">Nova movimentação</h3>
+
+            <p>Registre uma nova movimentação financeira.</p>
+          </div>
+
+          <button
+            type="button"
+            class="close-modal"
+            id="close-create-movement"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- =================================================
+                 FORMULÁRIO
+                 ================================================= -->
+
+        <form id="create-movement-form">
+          <!-- Valor -->
+
+          <div class="form-group">
+            <label for="value"> Valor </label>
+
+            <input
+              type="number"
+              name="value"
+              id="value"
+              placeholder="0,00"
+              step="0.01"
+              min="0.01"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="date"> Valor </label>
+
+            <input
+              type="date"
+              name="date"
+              id="date"
+              placeholder="01/07/2026"
+              required
+            />
+          </div>
+
+          <!-- Categoria -->
+
+          <div class="form-group">
+            <label for="category"> Categoria </label>
+
+            <select name="category" id="category">
+              <option value="">Selecione uma categoria</option>
+
+              <option value="create-new">+ Criar nova categoria</option>
+            </select>
+          </div>
+
+          <!--
+                Campo inicialmente escondido.
+
+                Será utilizado quando o usuário selecionar
+                "Criar nova categoria".
+                -->
+
+          <div class="form-group hidden" id="new-category-container">
+            <label for="new-category"> Nova categoria </label>
+
+            <input
+              type="text"
+              name="new-category"
+              id="new-category"
+              placeholder="Ex: Investimentos"
+            />
+          </div>
+
+          <!-- Tipo -->
+
+          <div class="form-group">
+            <label for="type"> Tipo </label>
+
+            <select name="type" id="type" required>
+              <option value="">Selecione o tipo</option>
+
+              <option value="IN">ENTRADA</option>
+
+              <option value="OUT">SAÍDA</option>
+            </select>
+          </div>
+
+          <!-- Descrição -->
+
+          <div class="form-group">
+            <label for="description"> Descrição </label>
+
+            <textarea
+              name="description"
+              id="description"
+              placeholder="Descreva essa movimentação..."
+              rows="4"
+              maxlength="500"
+            ></textarea>
+          </div>
+
+          <!-- Botões -->
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              id="cancel-create-movement"
+            >
+              Cancelar
+            </button>
+
+            <button type="submit" class="primary-button">
+              Registrar movimentação
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+
+    <script src="js/home.js"></script>
+  </body>
+</html>
