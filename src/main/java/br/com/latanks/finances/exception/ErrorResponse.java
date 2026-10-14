@@ -1,14 +1,10 @@
 package br.com.latanks.finances.exception;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.context.request.WebRequest;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public record ErrorResponseBuilder(
+public record ErrorResponse(
         int status,
         String message,
         String exception,

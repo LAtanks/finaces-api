@@ -2,14 +2,10 @@ package br.com.latanks.finances.exception;
 
 import br.com.latanks.finances.exception.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +15,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -143,7 +138,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> buildErrorResponse(Exception exception, String message, HttpStatus  status, HttpServletRequest request) {;
-        ErrorResponseBuilder error = new ErrorResponseBuilder(status.value(), message, exception.getClass().getSimpleName(), request.getRequestURI(), LocalDateTime.now());
+        ErrorResponse error = new ErrorResponse(status.value(), message, exception.getClass().getSimpleName(), request.getRequestURI(), LocalDateTime.now());
 
         log.error("Exception {} occurred while processing request. Path of exception: {}", exception, request.getRequestURI());
 
@@ -151,7 +146,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> buildErrorResponse(Exception exception, HttpStatus  status, HttpServletRequest request) {
-        ErrorResponseBuilder error = new ErrorResponseBuilder(status.value(), exception.getMessage(), exception.getClass().getSimpleName(), request.getRequestURI(), LocalDateTime.now());
+        ErrorResponse error = new ErrorResponse(status.value(), exception.getMessage(), exception.getClass().getSimpleName(), request.getRequestURI(), LocalDateTime.now());
 
         log.error("Exception {} occurred while processing request. Path of exception: {}", exception, request.getRequestURI());
 
