@@ -24,6 +24,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+	implementation("com.opencsv:opencsv:5.12.0")
+
+
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
 
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")

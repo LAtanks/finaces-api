@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -59,10 +60,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EmptyOrNullFileException.class)
+    public ResponseEntity<Object> handleEmptyOrNullFile(EmptyOrNullFileException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidCSVFileException.class)
+    public ResponseEntity<Object> handleInvalidCSVFile(InvalidCSVFileException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Object> handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<Object> handleFileUpload(FileUploadException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidBankCSVFormat.class)
+    public ResponseEntity<Object> handleInvalidBankCSVFormat(InvalidBankCSVFormat ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
     }
 

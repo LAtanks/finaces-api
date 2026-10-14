@@ -18,7 +18,7 @@
     --background: #f5f7fb;
     --surface: #ffffff;
 
-    --border: #e5e7eb;
+    --border: #d3d7e1;
 
     --text: #111827;
     --text-secondary: #6b7280;
@@ -627,7 +627,7 @@ body {
 
     border: 1px solid var(--border);
 
-    background: white;
+    background: whitesmoke;
 
     color: var(--text);
 
@@ -968,7 +968,7 @@ body {
 .form-group select,
 .form-group textarea {
 
-    width: 100%;
+    width: 95%;
 
     border: 1px solid var(--border);
 

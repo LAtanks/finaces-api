@@ -6,10 +6,14 @@ import br.com.latanks.finances.models.dto.response.CreatedMovimentDTO;
 import br.com.latanks.finances.models.dto.response.TotalBalanceFromUserDTO;
 import br.com.latanks.finances.models.dto.request.UpdateMovimentDTO;
 import br.com.latanks.finances.services.MovimentService;
+import br.com.latanks.finances.utils.csv.Banks;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +27,14 @@ public class MovimentController {
     @PostMapping
     public ResponseEntity<CreatedMovimentDTO> create(@RequestBody CreateMovimentDTO moviment){
         return ResponseEntity.ok(service.create(moviment));
+    }
+
+    @PostMapping(value = "/loadcsvfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CreatedMovimentDTO>> update(@RequestPart("csvFile") MultipartFile csvFile, @RequestPart("bank")String bank) throws IOException {
+        System.out.println(csvFile.getOriginalFilename());
+
+
+        return ResponseEntity.ok(service.createMovimentsFromCSVFile(csvFile, Banks.fromText(bank)));
     }
 
     @GetMapping("/{id}")
@@ -58,4 +70,6 @@ public class MovimentController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

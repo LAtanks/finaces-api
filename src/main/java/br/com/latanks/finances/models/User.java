@@ -46,7 +46,7 @@ public class User {
     @Column(unique = true, nullable = false, updatable = false)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @Getter(onMethod_ = @__( @JsonIgnore))
     private Set<Moviment> moviments = new HashSet<>();
 }

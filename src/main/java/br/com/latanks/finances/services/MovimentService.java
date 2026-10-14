@@ -14,13 +14,24 @@ import br.com.latanks.finances.repositories.IMovimentRepository;
 import br.com.latanks.finances.repositories.IUserRepository;
 import br.com.latanks.finances.utils.AuthUtil;
 import br.com.latanks.finances.utils.PropertiesUtil;
+import br.com.latanks.finances.utils.csv.Banks;
+import br.com.latanks.finances.utils.csv.CsvReaderUtil;
+import com.opencsv.CSVReader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +48,8 @@ public class MovimentService {
     private final MovimentMapper mapper;
 
     public CreatedMovimentDTO create(CreateMovimentDTO moviment) {
-        if(moviment.date().isAfter(LocalDate.now()) || moviment.date().isBefore(LocalDate.now().plusMonths(-6))) {
-            throw new InvalidMovimentDateException("A data não pode ser menos que 6 meses ou maior que a data atual");
+        if(moviment.date().isAfter(LocalDate.now()) || moviment.date().isBefore(LocalDate.now().plusMonths(-24))) {
+            throw new InvalidMovimentDateException("A data não pode ser menor que 2 ano ou maior que a data atual");
         }
 
         User movimentCreatedBy = userRepository.findByEmail(AuthUtil.getAuthenticatedEmail()).orElseThrow(
@@ -104,8 +115,8 @@ public class MovimentService {
         double totalExpense = 0D;
         double totalBalance = 0D;
 
-        if(Year.now().isAfter(Year.of(year)) || LocalDate.now().isAfter(LocalDate.now().plusMonths(month)) || LocalDate.of(year, month, 1).isBefore(LocalDate.now().plusMonths(-6))) {
-            throw new InvalidMovimentDateException("A data não pode ser menos que 6 meses ou maior que a data atual");
+        if(Year.now().isAfter(Year.of(year)) || LocalDate.now().isAfter(LocalDate.now().plusMonths(month)) || LocalDate.of(year, month, 1).isBefore(LocalDate.now().plusMonths(-12))) {
+            throw new InvalidMovimentDateException("A data não pode ser menor que 1 ano ou maior que a data atual");
         }
 
         User user = userRepository.findByEmail(AuthUtil.getAuthenticatedEmail()).orElseThrow(
@@ -169,5 +180,53 @@ public class MovimentService {
                 .toList().stream().map(mapper::toDTO).toList();
 
         return fromUser;
+    }
+
+    public List<CreatedMovimentDTO> createMovimentsFromCSVFile(MultipartFile csvFile, Banks bank) throws IOException {
+        validateFile(csvFile);
+
+        File file = getFileFromBytes(csvFile.getBytes());
+
+        CsvReaderUtil csvReaderUtil = new CsvReaderUtil(file, bank);
+
+        csvReaderUtil.readCsv();
+
+        List<Moviment> movimentsListSaved = csvReaderUtil.getCreateMoviments().stream().map(this.mapper::toEntity).toList();
+        movimentsListSaved.stream().forEach(e -> {
+            e.setUser(userRepository.findByEmail(AuthUtil.getAuthenticatedEmail()).orElseThrow());
+            if(e.getDate().isAfter(LocalDate.now()) || e.getDate().isBefore(LocalDate.now().plusMonths(-12))) {
+                throw new InvalidMovimentDateException("A data do extrato não pode ser menor que 1 ano.");
+            }
+        });
+
+        repository.saveAll(movimentsListSaved);
+
+        List<CreatedMovimentDTO> createdMovimentDTOS = movimentsListSaved.stream().map(mapper::toDTO).toList();
+
+        return createdMovimentDTOS;
+    }
+
+    private File getFileFromBytes(byte[] bytes) throws IOException {
+        File file = new File("moviments.csv");
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(bytes);
+            return file;
+        }
+    }
+
+    private boolean validateFile(MultipartFile file) throws IOException {
+        if(file.isEmpty()) {
+            throw new EmptyOrNullFileException("Arquivo não pode ser vazio");
+        }
+
+        if(!file.getContentType().equals("text/csv")){
+            throw new InvalidCSVFileException("Tipo de arquivo não suportado, apenas .csv, Tipo enviado: " + file.getContentType());
+        }
+
+        if( !(file.getOriginalFilename().toLowerCase()).endsWith(".csv") ){
+            throw new InvalidCSVFileException("Extensão do arquivo precisa ser .csv");
+        }
+
+        return true;
     }
 }

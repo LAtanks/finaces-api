@@ -40,7 +40,7 @@ public class Moviment {
     @Enumerated(EnumType.STRING)
     private MovimentType type;
 
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     private String description;
 
     @ManyToOne

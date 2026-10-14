@@ -19,8 +19,14 @@ const closeCreateMovement = document.getElementById("close-create-movement");
 const cancelCreateMovement = document.getElementById("cancel-create-movement");
 
 const createMovementForm = document.getElementById("create-movement-form");
-
 const openCreateMovement = document.getElementById("open-create-movement");
+
+
+const loadCSVModal = document.getElementById("load-csv-modal");
+const closeLoadCSV = document.getElementById("close-load-csv-movement");
+const loadCSVTableForm = document.getElementById("load-csv-table-form")
+const openLoadCSV = document.getElementById("load-csv-file");
+
 
 const openCreateMovementTable = document.getElementById(
   "open-create-movement-table",
@@ -85,6 +91,14 @@ async function openMovementModal() {
   createMovementModal.classList.add("active");
 }
 
+function openLoadCSVModal(){
+  loadCSVModal.classList.add("active");
+}
+
+function closeLoadCSVModal(){
+  loadCSVModal.classList.remove("active");
+}
+
 function closeMovementModal() {
   createMovementModal.classList.remove("active");
 }
@@ -94,6 +108,8 @@ function closeMovementModal() {
    ========================================================= */
 
 openCreateMovement.addEventListener("click", openMovementModal);
+
+openLoadCSV.addEventListener("click", openLoadCSVModal);
 
 openCreateMovementTable.addEventListener("click", openMovementModal);
 
@@ -106,6 +122,8 @@ emptyCreateMovement.addEventListener("click", openMovementModal);
 closeCreateMovement.addEventListener("click", closeMovementModal);
 
 cancelCreateMovement.addEventListener("click", closeMovementModal);
+
+closeLoadCSV.addEventListener("click", closeLoadCSVModal)
 
 /*
  * Fecha o modal quando clicar no fundo escuro.
@@ -178,7 +196,7 @@ createMovementForm.addEventListener("submit", async function (event) {
 
     console.log(movement)
     if(!response.ok){
-        console.log(response.json())
+        console.log(response.json());
     }
     
   /*
@@ -191,6 +209,52 @@ createMovementForm.addEventListener("submit", async function (event) {
   newCategoryContainer.classList.add("hidden");
 
   closeMovementModal();
+});
+
+/* =========================================================
+   FORMULÁRIO DE CARREGAR TABELA
+   ========================================================= */
+
+loadCSVTableForm.addEventListener("submit", async function (event) {
+  /*
+   * Impede o navegador de recarregar a página.
+   */
+
+  event.preventDefault();
+
+  let confirmWindow = window.confirm("Essa ação não terá volta. Deseja continuar?")
+
+  if(confirmWindow == false) return;
+
+  const formData = new FormData(loadCSVTableForm);
+  const fileInput = document.getElementById("file");
+
+  const table = {
+    csvFile: formData.get("file"),
+    bank: formData.get("banks"),
+  };
+
+  const requestData = new FormData();
+
+  requestData.append("csvFile", table.csvFile);
+  requestData.append("bank", table.bank);
+
+  const response = await fetch("http://localhost:8080/moviment/loadcsvfile", {
+    method: "POST",
+    headers: {
+      Authorization: authToken,
+    },
+    body: requestData,
+  }).catch(error => console.log(error))
+
+  /*
+   * Depois que o backend responder com sucesso,
+   * podemos limpar o formulário e fechar o modal.
+   */
+
+  loadCSVTableForm.reset();
+
+  closeLoadCSVModal();
 });
 
 /* =========================================================
@@ -287,9 +351,11 @@ async function loadBalanceInformations() {
         }
         currentBalanceValue = totalIncomeValue - totalExpenseValue
 
-        currentBalance.innerHTML = currentBalanceValue
-        totalExpense.innerHTML = totalExpenseValue
-        totalIncome.innerHTML = totalIncomeValue
+        let formatter = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        currentBalance.innerHTML = formatter.format(currentBalanceValue)
+        totalExpense.innerHTML = formatter.format(totalExpenseValue)
+        totalIncome.innerHTML = formatter.format(totalIncomeValue)
     });
 }   
 
@@ -327,11 +393,11 @@ async function loadAllMovimentsFromUser(){
 
 
         tr.innerHTML = `
-            <td>${m.value}</td>
+            <td>${parseFloat(m.value)}</td>
             <td>${m.date}</td>
             <td>${m.type === "IN" ? "Entrada" : "Saida"}</td>
             <td>${m.description}</td>
-            <td>${m.category.description}</td>
+            <td>${m.categoryDescription}</td>
             
         `
         movimentTableBody.appendChild(tr);
